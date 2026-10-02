@@ -10,8 +10,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: debian:12
 
     steps:
+      - name: Instalar dependencias base del contenedor
+        run: |
+          apt-get update
+          apt-get install -y sudo git curl ca-certificates
+
       - name: Clonar repositorio
         uses: actions/checkout@v4
 
@@ -20,7 +26,6 @@ jobs:
 
       - name: Instalar dependencias del sistema
         run: ./build.sh --deps
-        # Nota: el script ya usa sudo internamente, en GitHub Actions funciona sin problemas.
 
       - name: Compilar en modo Release
         run: ./build.sh --release
@@ -31,4 +36,4 @@ jobs:
           name: trinity-launcher-binarios
           path: |
             build/app/trinity
-          if-no-files-found: warn   # No falla si solo existe uno de los binarios
+          if-no-files-found: warn
